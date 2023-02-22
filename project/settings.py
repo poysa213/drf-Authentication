@@ -148,3 +148,6 @@ REST_KNOX = {
   'TOKEN_LIMIT_PER_USER': None,
   'AUTO_REFRESH': False,
 }
+
+
+AUTH_USER_MODEL = "authentication.User"

@@ -1,17 +1,17 @@
 from django.contrib.auth import login
-from django.contrib.auth.models import User
+from django.contrib.auth  import get_user_model
 
 
 from rest_framework.response import Response
 from rest_framework import generics,status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from knox.views import LoginView as KnoxLoginView
 from knox.models import AuthToken
-from authentication.serializers import LoginUserSerializer, UserSerializer, RegisterSerializer
+from authentication.serializers import LoginUserSerializer, UserSerializer, RegisterSerializer, RegisterAdminSerializer
 
-
+User = get_user_model()
 class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
@@ -52,3 +52,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+class RegisterAdminView(generics.CreateAPIView):
+    serializer_class = RegisterAdminSerializer
+    permission_classes = [IsAdminUser]
+    queryset = User.objects.all()
