@@ -1,11 +1,11 @@
-from django.contrib.auth import login
+
 from django.contrib.auth  import get_user_model
 
 
 from rest_framework.response import Response
 from rest_framework import generics,status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from rest_framework.authtoken.serializers import AuthTokenSerializer
+
 
 from knox.views import LoginView as KnoxLoginView
 from knox.models import AuthToken
@@ -34,15 +34,15 @@ class LoginView(KnoxLoginView):
     serializer_class = LoginUserSerializer
     permission_classes = (AllowAny,)
 
-    def post(self, request, format=None):
-        serializer = AuthTokenSerializer(data=request.data)
+    def post(self, request):
+        serializer = LoginUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        login(request, user)
-        return super(LoginView, self).post(request, format=None) 
+        user = serializer.validated_data
+        return Response({
+            "user": UserSerializer(user).data,
+            "token": AuthToken.objects.create(user)[1]
+        }) 
 
-    def get_context_data(self, *args, **kwargs):
-        return {'request': self.request}
     
 
 
