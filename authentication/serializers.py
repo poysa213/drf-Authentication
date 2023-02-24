@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
+
+
 
 
 # from authentication.models import User
@@ -10,7 +11,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email')
 
 
 class LoginUserSerializer(serializers.Serializer):
@@ -19,11 +20,14 @@ class LoginUserSerializer(serializers.Serializer):
         style={'input_type': 'password'},
         trim_whitespace=False
     )
+
     def validate(self, data):
         user = authenticate(**data)
         if user and user.is_active:
             return user
         raise serializers.ValidationError('Incorrect Credentials Passed.')
+    
+    
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -32,7 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-
+    
     def create(self, validated_data):
         password_data = validated_data.pop('password')
         user = User.objects.create(**validated_data)
