@@ -19,7 +19,7 @@ class RegisterView(generics.GenericAPIView):
     queryset = User.objects.all()
     
     def post(self, request, *args,  **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data, context = {"request": self.request})
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             return Response({
@@ -30,10 +30,3 @@ class RegisterView(generics.GenericAPIView):
     
 
 
-class ProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_object(self):
-        return self.request.user
-    
