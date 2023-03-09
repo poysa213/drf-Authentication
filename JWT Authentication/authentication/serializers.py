@@ -35,10 +35,10 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Email deja exist!")
         response = requests.get('https://api.hunter.io/v2/email-verifier?email='+ email + '&api_key='+ os.environ.get('API_KEY'))
         response = response.json()
-        if(response.get("data", {}).get("status", "") == "valid"):
-            return email
-        raise ValidationError('THis is NoT a valid email!!!')
-       
+        # if(response.get("data", {}).get("status", "") == "valid"):
+        #     return email
+        # raise ValidationError('THis is NoT a valid email!!!')
+        return email
         
     
     def create(self, validated_data):
@@ -51,6 +51,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(write_only=True)
     new_password = serializers.CharField(write_only=True)
+    
     class Meta:
         model = User
         fields = ['new_password', 'old_password']
@@ -69,3 +70,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'first_name', 'last_name')
