@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 
-import requests
+
 from dotenv import load_dotenv
 import os
 import re
@@ -33,8 +33,8 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             raise ValidationError("Enter a valid Email!")
         if User.objects.filter(email__iexact=email.lower()).exists():
             raise serializers.ValidationError("Email deja exist!")
-        response = requests.get('https://api.hunter.io/v2/email-verifier?email='+ email + '&api_key='+ os.environ.get('API_KEY'))
-        response = response.json()
+        # response = requests.get('https://api.hunter.io/v2/email-verifier?email='+ email + '&api_key='+ os.environ.get('API_KEY'))
+        # response = response.json()
         # if(response.get("data", {}).get("status", "") == "valid"):
         #     return email
         # raise ValidationError('THis is NoT a valid email!!!')
