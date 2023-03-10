@@ -24,7 +24,7 @@ class RegisterView(generics.GenericAPIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             return Response({
-                "msg": "New user was Created successfully",
+                "messge": "New user was Created successfully",
                 "user": UserSerializer(user,context=self.get_serializer_context()).data,
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.data, status=status.HTTP_401_BAD_REQUEST)
@@ -33,31 +33,21 @@ class RegisterView(generics.GenericAPIView):
 
 
 
-class ChangePasswordView(generics.UpdateAPIView):
-    serializer_class = ChangePasswordSerializer
+class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
-    queryset = User.objects.all()
 
-    def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
-
-    def update(self, request, *args,  **kwargs):
-        self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data, context = {"user": self.request.user})
+    def post(self, request, *args,  **kwargs):
+        serializer = ChangePasswordSerializer(data=request.data, context = {"user": self.request.user})
         if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
+            serializer.save(validated_data=serializer.validated_data)
             return Response({
-                "status": status.HTTP_201_CREATED,
-                "msg": "Password was changed successfully"
+                "messge": "Password was changed successfully"
             }, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.data, status=status.HTTP_401_BAD_REQUEST)
 
 
 class AuthTest(APIView):
-
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         return Response({"msg":"auth confirmed"})
     
