@@ -27,10 +27,6 @@ class RegisterUserSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(validators=[validate_password])
 
-    # class Meta:
-    #     model = User
-    #     fields = ('email', 'password')
-    #     extra_kwargs = {'password': {'write_only' : True}}
    
     def validate_email(self, email :str) -> str :
         if not re.search(r"^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$", email):
@@ -103,3 +99,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'first_name', 'last_name')
+
+
+# class ResetPasswordSerializer(serializers.Serializer):
+#     email = serializers.EmailField(required=True)
+#     password = serializers.CharField(required=True, validators=[validate_password])
+#     # otp = serializers.CharField(required=True, max)

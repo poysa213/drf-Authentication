@@ -38,3 +38,8 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
+
+class OTP(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='otp')
+    code = models.CharField(max_length=8)
+    created_at = models.DateTimeField(auto_now_add=True)
