@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 
-from .serializers import  UserSerializer, RegisterUserSerializer, ChangePasswordSerializer, UserProfileSerializer
+from .serializers import  UserSerializer, RegisterUserSerializer, ChangePasswordSerializer, ResetPasswordSerializer
 from .models import OTP
 from .utils import get_otp
 
@@ -74,4 +74,16 @@ class SendOTPView(APIView):
             )
             return Response({'message':'OTP code sent successfully'}, status=status.HTTP_202_ACCEPTED)
         return Response({'error':'No such user found with this email!'}, status=status.HTTP_404_NOT_FOUND)
-            
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        otp = serializer.validated_data['otp']
+        otp.delete()
+        user = serializer.validated_data['user']
+        user.set_password(serializer.validated_data['password'])
+        user.save()
+        return Response({'message': 'Password reset successfully'}, status=status.HTTP_202_ACCEPTED)
+        
+

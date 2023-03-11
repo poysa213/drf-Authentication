@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 import os
 import re
 
+
+from .models import OTP
 load_dotenv()   
 
 User = get_user_model()
@@ -101,7 +103,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'first_name', 'last_name')
 
 
-# class ResetPasswordSerializer(serializers.Serializer):
-#     email = serializers.EmailField(required=True)
-#     password = serializers.CharField(required=True, validators=[validate_password])
-#     # otp = serializers.CharField(required=True, max)
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, validators=[validate_password])
+    code = serializers.CharField(required=True)
+
+
+    def validate(self, data):
+        user = User.objects.filter(email=data['email']).first()
+        if user:
+            otp = OTP.objects.filter(user=user, code=data.get('code', None)).first()
+            if otp:
+                data['otp'] = otp
+                data['user'] = user
+                return data
+        raise ValidationError({'error': 'something went wronge'})
+
+
+
+        
+    
